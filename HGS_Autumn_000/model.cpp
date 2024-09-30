@@ -102,7 +102,7 @@ void CModel::Draw()
 				pDevice->SetMaterial(&pMat[nCntMat].MatD3D);
 
 				// テクスチャの設定
-				pDevice->SetTexture(0, nullptr);
+				pDevice->SetTexture(0, m_apTexture[nCntMat]);
 
 				// モデルパーツの描画
 				m_ModelInfo.Mesh->DrawSubset(nCntMat);
@@ -210,3 +210,4 @@ void CModel::SetModel(const char* address)
 	nIdx = pModeldata->Regist(address);
 	BindModel(CManager::GetModeldata()->GetAddress(nIdx));
 }
+

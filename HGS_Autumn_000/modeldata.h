@@ -24,7 +24,7 @@ public:
 
 	typedef struct
 	{
-		LPDIRECT3DTEXTURE9 pTex[MAX_MAT_DATA];
+		LPDIRECT3DTEXTURE9 *pTex;
 		int nIdx;
 	}TexData;
 
@@ -34,6 +34,8 @@ public:
 	int Regist(const char* pTexturename);
 	ModelData *GetAddress(int Idx);
 	D3DCOLORVALUE *GetMatData(const char* pAddress, int MatNum);
+
+	LPDIRECT3DTEXTURE9 *GetTexture(int Idx) { return m_pTexData[Idx].pTex; }
 private:
 	
 	TexData m_pTexData[MAX_MODEL_DATA];
@@ -44,9 +46,9 @@ private:
 	static int m_NumAll;
 	
 
-	//LPD3DXMESH Mesh;			// メッシュ(頂点情報)へのポインタ
-	//LPD3DXBUFFER BuffMat;	// マテリアルへのポインタ
-	//DWORD NumMat;	// マテリアルの数
+	LPD3DXMESH Mesh;			// メッシュ(頂点情報)へのポインタ
+	LPD3DXBUFFER BuffMat;	// マテリアルへのポインタ
+	DWORD NumMat;	// マテリアルの数
 };
 
 #endif // !_MODELDATA_H_

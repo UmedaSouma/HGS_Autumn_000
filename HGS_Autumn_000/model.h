@@ -47,10 +47,12 @@ public:
 	int GetModelIdx() { return m_nIdx; }	// モデル番号を取得する
 	void SetModelAddress(const char* Address) { m_pModelAddress = Address; }
 	const char* GetModelAddress() { return m_pModelAddress; }
+
+	void SetTexture(LPDIRECT3DTEXTURE9* tex) { m_apTexture = tex; }
 private:
 	int m_nIdx;
 	int m_Direction;
-	LPDIRECT3DTEXTURE9 m_apTexture[16] = {};
+	LPDIRECT3DTEXTURE9 *m_apTexture;
 	D3DCOLORVALUE m_Diffuse[64];
 	bool m_bMat;	// ダメージ状態のマテリアル変更
 	const char* m_pModelAddress;	// モデルデータのアドレス

@@ -30,7 +30,7 @@ CModeldata::CModeldata()
 		for (int n = 0; n < MAX_MAT_DATA; n++)
 		{
 			m_StandardCol[nCnt][n] = { 0.0f,0.0f,0.0f };
-			m_pTexData[nCnt].pTex[n] = nullptr;
+			m_pTexData[nCnt].pTex = nullptr;
 		}
 
 		m_pTexData[nCnt].nIdx = 0;
@@ -42,6 +42,26 @@ CModeldata::CModeldata()
 //========================================================================================================================
 CModeldata::~CModeldata()
 {
+	for (int nCnt = 0; nCnt < MAX_MODEL_DATA; nCnt++)
+	{
+		m_pModelData[nCnt] = {};
+
+
+		m_pStorage[nCnt] = nullptr;
+
+		m_pModelData[nCnt].Mesh = nullptr;
+		m_pModelData[nCnt].BuffMat = nullptr;
+		m_pModelData[nCnt].NumMat = 0;
+
+		for (int n = 0; n < MAX_MAT_DATA; n++)
+		{
+			m_StandardCol[nCnt][n] = { 0.0f,0.0f,0.0f };
+			m_pTexData[nCnt].pTex = nullptr;
+		}
+
+		m_pTexData[nCnt].nIdx = 0;
+	}
+
 }
 
 //========================================================================================================================
@@ -111,15 +131,15 @@ int CModeldata::Regist(const char*modelpass)
 				D3DXMATERIAL* pMat;				// マテリアルデータのポインタ
 				pMat = (D3DXMATERIAL*)m_pModelData[nCnt].BuffMat->GetBufferPointer();	// マテリアルデータのポインタの取得
 
+				m_pTexData[nCnt].pTex = new LPDIRECT3DTEXTURE9[m_pModelData[nCnt].NumMat];
+
 				for (int nCntMat = 0; nCntMat < (int)m_pModelData[nCnt].NumMat; nCntMat++)
 				{
-					//if (pMat[nCntMat].pTextureFilename != nullptr)
-					//{
-					//	if (SUCCEEDED(D3DXCreateTextureFromFile(pDevice, pMat[nCntMat].pTextureFilename, &m_pTexData[nCnt].pTex[nCntMat])))	// テクスチャ作成
-					//	{
-
-					//	}
-					//}
+					if (pMat[nCntMat].pTextureFilename != nullptr)
+					{
+						// テクスチャの読み込み
+						D3DXCreateTextureFromFile(pDevice, pMat[nCntMat].pTextureFilename, m_pTexData[nCntMat].pTex);
+					}
 
 					m_StandardCol[nCnt][nCntMat] = pMat[nCntMat].MatD3D.Diffuse;	// 元の色を保存しておく
 				}

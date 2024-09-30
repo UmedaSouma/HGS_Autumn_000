@@ -43,11 +43,12 @@ CPlayer3D::~CPlayer3D()
 HRESULT CPlayer3D::Init()
 {
 	// モデルの設定
-	SetModelAddress("data\\model\\player_001.x");		// アドレスを保存しておく
+	SetModelAddress("data\\model\\BallPlayer.x");		// アドレスを保存しておく
 	CModeldata* pModeldata = CManager::GetModeldata();	// modeldata のポインタを持ってくる
 	int nIdx = pModeldata->Regist(GetModelAddress());	// モデルデータの登録
 	BindModel(pModeldata->GetAddress(nIdx));			// モデル情報をセットする
 	SetModelIdx(nIdx);
+	SetTexture(pModeldata->GetTexture(nIdx));
 
 	CModel::Init();
 
