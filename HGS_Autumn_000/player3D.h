@@ -8,13 +8,14 @@
 #define _PLAYER_3D_H_
 #include "main.h"
 #include "model.h"
+#include "objectX.h"
 
 //===================================================================================
 // クラス
 //===================================================================================
 
 // Player3Dのクラス
-class CPlayer3D :public CModel
+class CPlayer3D :public CObjectX
 {
 private:
 	typedef enum
@@ -57,10 +58,10 @@ public:
 	void UpdateDamage();		// ダメージを受けているときの処理
 	void DeathPlayer();			// プレイヤーが死んだとき
 
-	D3DXVECTOR3 LookObjectCollision(COLLISION_TYPE type);
-	D3DXVECTOR3 VerticalCollision(CObject* pObj);	// 縦の当たり判定
-	D3DXVECTOR3 HorizonCollision(CObject* pObj);	// 横の当たり判定
-	D3DXVECTOR3 HighLowCollision(CObject* pObj);	// 上下の当たり判定
+	//D3DXVECTOR3 LookObjectCollision(COLLISION_TYPE type);
+	//D3DXVECTOR3 VerticalCollision(CObject* pObj);	// 縦の当たり判定
+	//D3DXVECTOR3 HorizonCollision(CObject* pObj);	// 横の当たり判定
+	//D3DXVECTOR3 HighLowCollision(CObject* pObj);	// 上下の当たり判定
 
 	CPlayer3D* GetPlayer() { return this; }
 	static CPlayer3D* Create(D3DXVECTOR3 pos);	// 生成処理

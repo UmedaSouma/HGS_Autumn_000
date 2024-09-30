@@ -11,10 +11,12 @@
 //===================================================================================
 // コンストラクタ
 //===================================================================================
-CObjectX::CObjectX():m_pos{ 0.0f,0.0f,0.0f }
-,m_rot{ 0.0f,0.0f,0.0f }
-,m_scale{ 0.0f,0.0f,0.0f }
+CObjectX::CObjectX(int nPriority):CObject(nPriority)
 {
+	m_pos = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
+	m_rot = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
+	m_scale = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
+	m_ModelInfo.m_pTexture = nullptr;
 }
 
 //===================================================================================
@@ -22,6 +24,19 @@ CObjectX::CObjectX():m_pos{ 0.0f,0.0f,0.0f }
 //===================================================================================
 CObjectX::~CObjectX()
 {
+	if (m_ModelInfo.m_pTexture != nullptr)
+	{
+		// テクスチャの破棄
+		for (DWORD i = 0; i < m_ModelInfo.NumMat; i++)
+		{
+			if (m_ModelInfo.m_pTexture[i] != nullptr)
+			{
+				m_ModelInfo.m_pTexture[i]->Release();
+			}
+		}
+		delete[]m_ModelInfo.m_pTexture;
+		m_ModelInfo.m_pTexture = nullptr;
+	}
 }
 
 //===================================================================================
@@ -61,6 +76,7 @@ void CObjectX::Uninit()
 //===================================================================================
 void CObjectX::Update()
 {
+
 }
 
 //===================================================================================
@@ -103,7 +119,7 @@ void CObjectX::Draw()
 			pDevice->SetMaterial(&pMat[nCntMat].MatD3D);
 
 			// テクスチャの設定
-			pDevice->SetTexture(0, nullptr);
+			pDevice->SetTexture(0, m_ModelInfo.m_pTexture[nCntMat]);
 
 			// モデルパーツの描画
 			m_ModelInfo.Mesh->DrawSubset(nCntMat);
@@ -114,20 +130,6 @@ void CObjectX::Draw()
 	pDevice->SetMaterial(&matDef);
 }
 
-//===================================================================================
-// モデルの情報をセットする
-//===================================================================================
-void CObjectX::SetModelInfo(LPD3DXMESH mesh, LPD3DXBUFFER buffmat, DWORD nummat)
-{
-	// 各変数の初期化
-	m_ModelInfo.Mesh = nullptr;			// メッシュ(頂点情報)へのポインタ
-	m_ModelInfo.BuffMat = nullptr;	// マテリアルへのポインタ
-	m_ModelInfo.NumMat = 0;	// マテリアルの数
-
-	m_ModelInfo.Mesh = mesh;
-	m_ModelInfo.BuffMat = buffmat;
-	m_ModelInfo.NumMat = nummat;
-}
 
 //===================================================================================
 // 位置を設定
@@ -143,6 +145,46 @@ void CObjectX::SetPos(D3DXVECTOR3 pos)
 D3DXVECTOR3& CObjectX::GetPos()
 {
 	return m_pos;
+}
+
+//===================================================================================
+// モデルの情報をセットする
+//===================================================================================
+void CObjectX::SetModelInfo(const char aPath[FILE_PATH])
+{
+	// デバイスのポインタ
+	LPDIRECT3DDEVICE9 pDevice = nullptr;
+
+	pDevice = CManager::GetRenderer()->GetDevice();
+
+	strcpy(&m_cFileName[0], &aPath[0]);
+
+	// Xファイルの読み込み
+	D3DXLoadMeshFromX(m_cFileName,
+		D3DXMESH_SYSTEMMEM,
+		pDevice,
+		NULL,
+		&m_ModelInfo.BuffMat,
+		NULL,
+		&m_ModelInfo.NumMat,
+		&m_ModelInfo.Mesh);
+
+	// マテリアル情報の取得
+	D3DXMATERIAL* pMat = (D3DXMATERIAL*)m_ModelInfo.BuffMat->GetBufferPointer();
+
+	m_pTexture = new LPDIRECT3DTEXTURE9[m_ModelInfo.NumMat];
+
+	for (DWORD i = 0; i < m_ModelInfo.NumMat; i++)
+	{
+		m_pTexture[i] = nullptr;
+
+		if (pMat[i].pTextureFilename)
+		{
+			// テクスチャの読み込み
+			D3DXCreateTextureFromFile(pDevice, pMat[i].pTextureFilename, &m_pTexture[i]);
+		}
+	}
+
 }
 
 //===================================================================================
